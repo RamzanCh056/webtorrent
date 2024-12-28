@@ -1,15 +1,13 @@
-const express = require('express');
-const cors = require('cors');
-const WebTorrent = require('webtorrent');
+import express from 'express';
+import cors from 'cors';
+import WebTorrent from 'webtorrent';
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Initialize WebTorrent client
 const client = new WebTorrent();
 
-// POST endpoint for streaming
 app.post('/stream', (req, res) => {
   const magnet = req.body.magnet;
 
@@ -25,10 +23,8 @@ app.post('/stream', (req, res) => {
         return res.status(400).send({ error: 'No MP4 file found in torrent' });
       }
 
-      // Construct the stream URL
       res.send({ streamUrl: `https://webtorrent-fds8.onrender.com/${file.name}` });
 
-      // Serve the file
       app.get(`/${file.name}`, (req, res) => {
         const range = req.headers.range;
 
@@ -65,7 +61,6 @@ app.post('/stream', (req, res) => {
   }
 });
 
-// Start the server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`WebTorrent server running on port ${PORT}`);
